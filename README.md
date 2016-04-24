@@ -21,7 +21,14 @@ Install
 
 Read, then run the script:
 
-    bash <(wget -qO- https://raw.githubusercontent.com/thoughtbot/laptop/master/linux) 2>&1 | tee ~/laptop.log
+    # Download and review the install script
+    wget -qO- https://raw.githubusercontent.com/ncronquist/laptop/master/linux
+
+    # Make it executable
+    chmod 755 linux
+
+    # Run the install script
+    ./linux 2>&1 | tee ~/laptop.log
 
 Debugging
 ---------
@@ -37,48 +44,41 @@ What it sets up
 
 - [Bundler] for managing Ruby libraries
 - [Exuberant Ctags] for indexing files for vim tab completion
-- [Foreman] for serving Rails apps locally
-- [gh] for interacting with the GitHub API
 - [Heroku Config] for local `ENV` variables
 - [Heroku Toolbelt] for interacting with the Heroku API
 - [ImageMagick] for cropping and resizing images
+- [Docker] for running linux containers
+- [DVM] for managing Docker versions
 - [Node.js] and [NPM], for running apps and installing JavaScript packages
 - [NVM] for managing versions of Node.js
-- [Parity] for development, staging, and production parity
-- [Postgres] for storing relational data
-- [Qt] for headless JavaScript testing via Capybara Webkit
 - [Rails] gem for writing web applications
 - [Rbenv] for managing versions of Ruby
-- [Redis] for storing key-value data
-- [Ruby Build] for installing Rubies
 - [Ruby] stable for writing general-purpose code
 - [The Silver Searcher] for finding things in files
 - [Tmux] for saving project state and switching between projects
 - [Watch] for periodically executing a program and displaying the output
 - [Zsh] as your shell
+- [oh-my-zsh] for making zsh awesome
 
 [Bundler]: http://bundler.io/
 [Exuberant Ctags]: http://ctags.sourceforge.net/
-[Foreman]: https://github.com/ddollar/foreman
-[gh]: https://github.com/jingweno/gh
 [Heroku Config]: https://github.com/ddollar/heroku-config
 [Heroku Toolbelt]: https://toolbelt.heroku.com/
 [ImageMagick]: http://www.imagemagick.org/
 [Node.js]: http://nodejs.org/
+[Docker]: https://www.docker.com/
+[DVM]: https://github.com/getcarina/dvm
 [NPM]: https://www.npmjs.org/
 [NVM]: https://github.com/creationix/nvm
-[Parity]: https://github.com/croaky/parity
-[Postgres]: http://www.postgresql.org/
-[Qt]: http://qt-project.org/
-[Rails]: http://rubyonrails.org/
 [Rbenv]: https://github.com/sstephenson/rbenv
-[Redis]: http://redis.io/
 [Ruby Build]: https://github.com/sstephenson/ruby-build
 [Ruby]: https://www.ruby-lang.org/en/
 [The Silver Searcher]: https://github.com/ggreer/the_silver_searcher
 [Tmux]: http://tmux.sourceforge.net/
 [Watch]: http://linux.die.net/man/1/watch
 [Zsh]: http://www.zsh.org/
+[oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh
+
 
 It should take less than 15 minutes to install (depends on your machine).
 
@@ -94,12 +94,22 @@ Put your customizations in `~/.laptop.local`. For example, your
 
     #!/bin/sh
 
-    brew tap caskroom/cask
-    brew install brew-cask
+    fancy_echo "Installing keepass to manage passwords ..."
+      sudo apt-get install -y keepass2
 
-    brew cask install dropbox
-    brew cask install google-chrome
-    brew cask install rdio
+    fancy_echo "Installing unity-tweak-tool to customize unity ..."
+      sudo apt-get install -y unity-tweak-tool
+
+    if which spotify &>/dev/null  
+      fancy_echo "Installing Spotify for music ..."
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
+
+        echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
+
+        sudo apt-get update
+
+        sudo apt-get install spotify-client
+    fi
 
 You should write your customizations such that they can be run safely more than
 once. See the `linux` script for examples.
