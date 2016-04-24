@@ -19,3 +19,4 @@ common-components/dvm
 common-components/docker-environment
 common-components/personal-additions
 common-components/oh-my-zsh
+common-components/footer

@@ -95,7 +95,7 @@ fi
 node_version="4.4.3"
 
 fancy_echo "Installing Node $node_version ..."
-  source ~/.nvm/nvm.sh
+  source $HOME/.nvm/nvm.sh
   nvm install $node_version
   nvm use $node_version
   nvm alias default $node_version
@@ -149,6 +149,9 @@ fi
 
 ruby_version="2.3.0"
 rails_environment="4.2.6"
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
 fancy_echo "Installing Ruby $ruby_version ..."
   rbenv install -s "$ruby_version"
@@ -207,6 +210,7 @@ fi
 docker_version="1.10.2"
 
 fancy_echo "Installing Docker $docker_version ..."
+  source $HOME/.dvm/dvm.sh
   dvm install $docker_version
   dvm use $docker_version
 ### end common-components/docker-environment
@@ -222,4 +226,7 @@ if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
   sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 fi
 ### end common-components/oh-my-zsh
+
+fancy_echo "Install complete! Restart your computer ..."
+### end common-components/footer
 
