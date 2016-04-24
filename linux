@@ -86,6 +86,7 @@ fancy_echo "Changing your shell to zsh ..."
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
   fancy_echo "Installing oh-my-zsh ..."
   sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+fi
 ### end common-components/oh-my-zsh
 
 silver_searcher_from_source() {
@@ -177,6 +178,21 @@ fancy_echo "Installing rcm, to manage your dotfiles ..."
   [ "$sha" = "2e95bbc23da4a0b995ec4757e0920197f4c92357214a65fedaf24274cda6806d" ] && \
   sudo dpkg -i rcm_1.3.0-1_all.deb
 ### end linux-components/rcm
+
+if [[ ! -d ""$HOME/.dvm" ]]; then
+  fancy_echo "Installing dvm, to change Docker versions ..."
+  curl -sL https://download.getcarina.com/dvm/latest/install.sh | sh
+
+  append_to_zshrc '[[ -r $DVM_DIR/bash_completion ]] && . $DVM_DIR/bash_completion'
+fi
+### end common-components/dvm
+
+docker_version="1.10.2"
+
+fancy_echo "Installing Docker $docker_version ..."
+  dvm install $docker_version
+  dvm use $docker_version
+### end common-components/docker-environment
 
 fancy_echo "Installing your personal additions from ~/.laptop.local ..."
   if [[ -f ~/.laptop.local ]]; then

@@ -1,0 +1,6 @@
+if [[ ! -d "$HOME/.dvm" ]]; then
+  fancy_echo "Installing dvm, to change Docker versions ..."
+  curl -sL https://download.getcarina.com/dvm/latest/install.sh | sh
+
+  append_to_zshrc '[[ -r $DVM_DIR/bash_completion ]] && . $DVM_DIR/bash_completion'
+fi
