@@ -149,6 +149,7 @@ fi
 ### end common-components/rbenv
 
 ruby_version="2.3.0"
+rails_environment="4.2.6"
 
 fancy_echo "Installing Ruby $ruby_version ..."
   rbenv install -s "$ruby_version"
@@ -162,6 +163,10 @@ fancy_echo "Updating to latest Rubygems version ..."
 
 fancy_echo "Installing Bundler to install project-specific Ruby gems ..."
   gem install bundler --no-document --pre
+
+fancy_echo "Installing Rails for Ruby web development ..."
+  gem install rails -v $rails_environment
+  rbenv rehash
 ### end common-components/ruby-environment
 
 fancy_echo "Configuring Bundler for faster, parallel gem installation ..."

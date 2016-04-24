@@ -51,9 +51,10 @@ What it sets up
 - [DVM] for managing Docker versions
 - [Node.js] and [NPM], for running apps and installing JavaScript packages
 - [NVM] for managing versions of Node.js
-- [Rails] gem for writing web applications
 - [Rbenv] for managing versions of Ruby
+- [Ruby Build] for compiling and installing Ruby
 - [Ruby] stable for writing general-purpose code
+- [Rails] gem for writing web applications
 - [The Silver Searcher] for finding things in files
 - [Tmux] for saving project state and switching between projects
 - [Watch] for periodically executing a program and displaying the output
@@ -73,6 +74,7 @@ What it sets up
 [Rbenv]: https://github.com/sstephenson/rbenv
 [Ruby Build]: https://github.com/sstephenson/ruby-build
 [Ruby]: https://www.ruby-lang.org/en/
+[Rails]: https://github.com/rails/rails/tree/v4.2.6
 [The Silver Searcher]: https://github.com/ggreer/the_silver_searcher
 [Tmux]: http://tmux.sourceforge.net/
 [Watch]: http://linux.die.net/man/1/watch
