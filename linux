@@ -83,6 +83,11 @@ fancy_echo "Changing your shell to zsh ..."
   chsh -s $(which zsh)
 ### end common-components/zsh
 
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  fancy_echo "Installing oh-my-zsh ..."
+  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+### end common-components/oh-my-zsh
+
 silver_searcher_from_source() {
   git clone git://github.com/ggreer/the_silver_searcher.git /tmp/the_silver_searcher
   sudo apt-get install -y automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
