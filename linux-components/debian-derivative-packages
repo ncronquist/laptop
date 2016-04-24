@@ -4,6 +4,9 @@ fancy_echo "Installing git, for source control management ..."
 fancy_echo "Installing libraries for common gem dependencies ..."
   sudo apt-get install -y libxslt1-dev libcurl4-openssl-dev libksba8 libksba-dev libqtwebkit-dev libreadline-dev
 
+fancy_echo "Installing Ruby dependencies ..."
+  sudo apt-get install -y zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+
 fancy_echo "Installing ctags, to index files for vim tab completion of methods, classes, variables ..."
   sudo apt-get install -y exuberant-ctags
 
