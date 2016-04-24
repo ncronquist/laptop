@@ -83,12 +83,6 @@ fancy_echo "Changing your shell to zsh ..."
   chsh -s $(which zsh)
 ### end common-components/zsh
 
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  fancy_echo "Installing oh-my-zsh ..."
-  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-fi
-### end common-components/oh-my-zsh
-
 if [[ ! -d "$HOME/.nvm" ]]; then
   fancy_echo "Installing nvm, to change Node versions ..."
   curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
@@ -217,4 +211,10 @@ fancy_echo "Installing your personal additions from ~/.laptop.local ..."
     source ~/.laptop.local
   fi
 ### end common-components/personal-additions
+
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  fancy_echo "Installing oh-my-zsh ..."
+  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+fi
+### end common-components/oh-my-zsh
 
