@@ -25,9 +25,6 @@ append_to_zshrc() {
 #!/usr/bin/env bash
 ### end common-components/bash-shebang
 
-# Welcome to the thoughtbot laptop script! Be prepared to turn your laptop (or
-# desktop, no haters here) into an awesome development machine.
-
 # This file is auto-generated. Do not edit it by hand unless you know what
 # you're doing. Please see 'CONTRIBUTING.md' for more information.
 ### end common-components/header
@@ -48,64 +45,38 @@ fi
 append_to_zshrc 'export PATH="$HOME/.bin:$PATH"'
 ### end common-components/check-home-bin
 
-if ! grep -qiE 'wheezy|jessie|precise|trusty' /etc/os-release; then
+if ! grep -qiE 'wheezy|jessie|precise|trusty|xenial' /etc/os-release; then
   fancy_echo "Sorry! we don't currently support that distro."
   exit 1
 fi
 ### end linux-components/distro-check
 
-fancy_echo "Updating system packages ..."
-  if command -v aptitude >/dev/null; then
-    fancy_echo "Using aptitude ..."
-  else
-    fancy_echo "Installing aptitude ..."
-    sudo apt-get install -y aptitude
-  fi
-
-  sudo aptitude update
-### end linux-components/debian-package-update
-
 fancy_echo "Installing git, for source control management ..."
-  sudo aptitude install -y git
-
-fancy_echo "Installing base ruby build dependencies ..."
-  sudo aptitude build-dep -y ruby1.9.3
+  sudo apt-get install -y git
 
 fancy_echo "Installing libraries for common gem dependencies ..."
-  sudo aptitude install -y libxslt1-dev libcurl4-openssl-dev libksba8 libksba-dev libqtwebkit-dev libreadline-dev
-
-fancy_echo "Installing sqlite3, for prototyping database-backed rails apps"
- sudo aptitude install -y libsqlite3-dev sqlite3
-
-fancy_echo "Installing Postgres, a good open source relational database ..."
-  sudo aptitude install -y postgresql postgresql-server-dev-all
-
-fancy_echo "Installing Redis, a good key-value database ..."
-  sudo aptitude install -y redis-server
+  sudo apt-get install -y libxslt1-dev libcurl4-openssl-dev libksba8 libksba-dev libqtwebkit-dev libreadline-dev
 
 fancy_echo "Installing ctags, to index files for vim tab completion of methods, classes, variables ..."
-  sudo aptitude install -y exuberant-ctags
+  sudo apt-get install -y exuberant-ctags
 
 fancy_echo "Installing vim ..."
-  sudo aptitude install -y vim-gtk
+  sudo apt-get install -y vim-gtk
 
 fancy_echo "Installing tmux, to save project state and switch between projects ..."
-  sudo aptitude install -y tmux
+  sudo apt-get install -y tmux
 
 fancy_echo "Installing ImageMagick, to crop and resize images ..."
-  sudo aptitude install -y imagemagick
+  sudo apt-get install -y imagemagick
 
 fancy_echo "Installing watch, to execute a program periodically and show the output ..."
-  sudo aptitude install -y watch
+  sudo apt-get install -y watch
 
 fancy_echo "Installing curl ..."
-  sudo aptitude install -y curl
+  sudo apt-get install -y curl
 
 fancy_echo "Installing zsh ..."
-  sudo aptitude install -y zsh
-
-fancy_echo "Installing node, to render the rails asset pipeline ..."
-  sudo aptitude install -y nodejs
+  sudo apt-get install -y zsh
 ### end linux-components/debian-derivative-packages
 
 fancy_echo "Changing your shell to zsh ..."
@@ -114,7 +85,7 @@ fancy_echo "Changing your shell to zsh ..."
 
 silver_searcher_from_source() {
   git clone git://github.com/ggreer/the_silver_searcher.git /tmp/the_silver_searcher
-  sudo aptitude install -y automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
+  sudo apt-get install -y automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
   sh /tmp/the_silver_searcher/build.sh
   cd /tmp/the_silver_searcher
   sh build.sh
@@ -126,8 +97,8 @@ silver_searcher_from_source() {
 if ! command -v ag >/dev/null; then
   fancy_echo "Installing The Silver Searcher (better than ack or grep) to search the contents of files ..."
 
-  if aptitude show silversearcher-ag &>/dev/null; then
-    sudo aptitude install silversearcher-ag
+  if apt-cache search silversearcher-ag  | grep "silversearcher-ag " &>/dev/null; then
+    sudo apt-get install silversearcher-ag
   else
     silver_searcher_from_source
   fi
@@ -158,7 +129,7 @@ if [[ ! -d "$HOME/.rbenv/plugins/ruby-build" ]]; then
 fi
 ### end common-components/rbenv
 
-ruby_version="$(curl -sSL http://ruby.thoughtbot.com/latest)"
+ruby_version="2.3.0"
 
 fancy_echo "Installing Ruby $ruby_version ..."
   rbenv install -s "$ruby_version"
@@ -179,12 +150,13 @@ fancy_echo "Configuring Bundler for faster, parallel gem installation ..."
   bundle config --global jobs $((number_of_cores - 1))
 ### end linux-components/bundler
 
-fancy_echo "Installing Suspenders, thoughtbot's Rails template ..."
-  gem install suspenders --no-document
+# Examples: Not currently installing any gems
+# fancy_echo "Installing Suspenders, thoughtbot's Rails template ..."
+#  gem install suspenders --no-document
 
-fancy_echo "Installing Parity, shell commands for development, staging, and
-production parity ..."
-  gem install parity --no-document
+# fancy_echo "Installing Parity, shell commands for development, staging, and
+# production parity ..."
+#  gem install parity --no-document
 ### end common-components/default-gems
 
 fancy_echo "Installing Heroku CLI client ..."
@@ -194,26 +166,11 @@ fancy_echo "Installing the heroku-config plugin to pull config variables locally
   heroku plugins:install git://github.com/ddollar/heroku-config.git
 ### end linux-components/heroku
 
-fancy_echo "Installing GitHub CLI client ..."
-  version="$(curl https://github.com/jingweno/gh/releases/latest -s | cut -d'v' -f2 | cut -d'"' -f1)"
-
-  if uname -m | grep -Fq 'x86_64'; then
-    arch='amd64'
-  else
-    arch='i386'
-  fi
-
-  cd /tmp
-  url="https://github.com/jingweno/gh/releases/download/v${version}/gh_${version}_${arch}.deb"
-  curl "$url" -sLo gh.deb
-  sudo dpkg -i gh.deb
-  cd -
-### end linux-components/github
-
 fancy_echo "Installing rcm, to manage your dotfiles ..."
-  wget -O /tmp/rcm_1.1.0_all.deb http://mike-burns.com/project/rcm/rcm_1.1.0_all.deb
-  sudo dpkg -i /tmp/rcm_1.1.0_all.deb
-  rm -f /tmp/rcm_1.1.0_all.deb
+  wget https://thoughtbot.github.io/rcm/debs/rcm_1.3.0-1_all.deb
+  sha=$(sha256sum rcm_1.3.0-1_all.deb | cut -f1 -d' ')
+  [ "$sha" = "2e95bbc23da4a0b995ec4757e0920197f4c92357214a65fedaf24274cda6806d" ] && \
+  sudo dpkg -i rcm_1.3.0-1_all.deb
 ### end linux-components/rcm
 
 fancy_echo "Installing your personal additions from ~/.laptop.local ..."
