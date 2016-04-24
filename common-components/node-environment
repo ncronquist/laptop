@@ -1,7 +1,7 @@
 node_version="4.4.3"
 
 fancy_echo "Installing Node $node_version ..."
-  source ~/.nvm/nvm.sh
+  source $HOME/.nvm/nvm.sh
   nvm install $node_version
   nvm use $node_version
   nvm alias default $node_version
