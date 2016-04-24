@@ -7,6 +7,8 @@ linux-components/distro-check
 linux-components/debian-derivative-packages
 common-components/zsh
 common-components/oh-my-zsh
+common-components/nvm
+common-components/node-environment
 linux-components/silver-searcher
 common-components/rbenv
 common-components/ruby-environment

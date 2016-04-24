@@ -89,6 +89,19 @@ if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
 fi
 ### end common-components/oh-my-zsh
 
+if [[ ! -d "$HOME/.nvm" ]]; then
+  fancy_echo "Installing nvm, to change Node versions ..."
+  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+### end common-components/nvm
+
+node_version="4.4.3"
+
+fancy_echo "Installing Node $node_version ..."
+  nvm install $node_version
+  nvm use $node_version
+  nvm alias default $node_version
+### end common-components/node-environment
+
 silver_searcher_from_source() {
   git clone git://github.com/ggreer/the_silver_searcher.git /tmp/the_silver_searcher
   sudo apt-get install -y automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
@@ -179,7 +192,7 @@ fancy_echo "Installing rcm, to manage your dotfiles ..."
   sudo dpkg -i rcm_1.3.0-1_all.deb
 ### end linux-components/rcm
 
-if [[ ! -d ""$HOME/.dvm" ]]; then
+if [[ ! -d "$HOME/.dvm" ]]; then
   fancy_echo "Installing dvm, to change Docker versions ..."
   curl -sL https://download.getcarina.com/dvm/latest/install.sh | sh
 
