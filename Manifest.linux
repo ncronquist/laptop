@@ -1,11 +1,12 @@
-common-components/shared-functions
 common-components/bash-shebang
+common-components/shared-functions
 common-components/header
 common-components/exit-trap
 common-components/check-home-bin
 linux-components/distro-check
 linux-components/debian-derivative-packages
 common-components/zsh
+common-components/oh-my-zsh
 common-components/nvm
 common-components/node-environment
 linux-components/silver-searcher
@@ -14,9 +15,7 @@ common-components/ruby-environment
 linux-components/bundler
 common-components/default-gems
 linux-components/heroku
-linux-components/rcm
 common-components/dvm
 common-components/docker-environment
 common-components/personal-additions
-common-components/oh-my-zsh
 common-components/footer

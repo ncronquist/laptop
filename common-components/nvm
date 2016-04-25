@@ -1,4 +1,7 @@
-if [[ ! -d "$HOME/.nvm" ]]; then
+if [ ! -d "$HOME/.nvm" ]; then
   fancy_echo "Installing nvm, to change Node versions ..."
-  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+  git clone https://github.com/creationix/nvm.git $HOME/.nvm && cd $HOME/.nvm && git checkout `git describe --abbrev=0 --tags`
+  source $HOME/.nvm/nvm.sh
+  append_to_zshrc 'export NVM_DIR="$HOME/.nvm"'
+  append_to_zshrc '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm'
 fi

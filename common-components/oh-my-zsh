@@ -1,4 +1,7 @@
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
   fancy_echo "Installing oh-my-zsh ..."
-  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  # sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  git clone git://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh
+  cp $HOME/.zshrc $HOME/.zshrc.pre-oh-my-zsh
+  cp $HOME/.oh-my-zsh/templates/zshrc.zsh-template $HOME/.zshrc
 fi

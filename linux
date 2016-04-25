@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+### end common-components/bash-shebang
+
 fancy_echo() {
   printf "\n%b\n" "$1"
 }
@@ -22,9 +25,6 @@ append_to_zshrc() {
 }
 ### end common-components/shared-functions
 
-#!/usr/bin/env bash
-### end common-components/bash-shebang
-
 # This file is auto-generated. Do not edit it by hand unless you know what
 # you're doing. Please see 'CONTRIBUTING.md' for more information.
 ### end common-components/header
@@ -34,7 +34,7 @@ trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
 set -e
 ### end common-components/exit-trap
 
-if [[ ! -d "$HOME/.bin/" ]]; then
+if [ ! -d "$HOME/.bin/" ]; then
   mkdir "$HOME/.bin"
 fi
 
@@ -80,15 +80,34 @@ fancy_echo "Installing curl ..."
 
 fancy_echo "Installing zsh ..."
   sudo apt-get install -y zsh
+
+type rcm >/dev/null 2>&1 || {
+  fancy_echo "Installing rcm ..."
+  sudo add-apt-repository ppa:martin-frost/thoughtbot-rcm
+  sudo apt-get update
+  sudo apt-get install -y rcm
+}
 ### end linux-components/debian-derivative-packages
 
 fancy_echo "Changing your shell to zsh ..."
   chsh -s $(which zsh)
 ### end common-components/zsh
 
-if [[ ! -d "$HOME/.nvm" ]]; then
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  fancy_echo "Installing oh-my-zsh ..."
+  # sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  git clone git://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh
+  cp $HOME/.zshrc $HOME/.zshrc.pre-oh-my-zsh
+  cp $HOME/.oh-my-zsh/templates/zshrc.zsh-template $HOME/.zshrc
+fi
+### end common-components/oh-my-zsh
+
+if [ ! -d "$HOME/.nvm" ]; then
   fancy_echo "Installing nvm, to change Node versions ..."
-  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+  git clone https://github.com/creationix/nvm.git $HOME/.nvm && cd $HOME/.nvm && git checkout `git describe --abbrev=0 --tags`
+  source $HOME/.nvm/nvm.sh
+  append_to_zshrc 'export NVM_DIR="$HOME/.nvm"'
+  append_to_zshrc '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm'
 fi
 ### end common-components/nvm
 
@@ -185,24 +204,18 @@ fancy_echo "Configuring Bundler for faster, parallel gem installation ..."
 #  gem install parity --no-document
 ### end common-components/default-gems
 
-fancy_echo "Installing Heroku CLI client ..."
+type heroku >/dev/null 2>&1 || {
+  fancy_echo "Installing Heroku CLI client ..."
   curl -s https://toolbelt.heroku.com/install-ubuntu.sh | sh
-
-fancy_echo "Installing the heroku-config plugin to pull config variables locally to be used as ENV variables ..."
-  heroku plugins:install git://github.com/ddollar/heroku-config.git
+}
 ### end linux-components/heroku
-
-fancy_echo "Installing rcm, to manage your dotfiles ..."
-  wget https://thoughtbot.github.io/rcm/debs/rcm_1.3.0-1_all.deb
-  sha=$(sha256sum rcm_1.3.0-1_all.deb | cut -f1 -d' ')
-  [ "$sha" = "2e95bbc23da4a0b995ec4757e0920197f4c92357214a65fedaf24274cda6806d" ] && \
-  sudo dpkg -i rcm_1.3.0-1_all.deb
-### end linux-components/rcm
 
 if [[ ! -d "$HOME/.dvm" ]]; then
   fancy_echo "Installing dvm, to change Docker versions ..."
   curl -sL https://download.getcarina.com/dvm/latest/install.sh | sh
-
+  source $HOME/.dvm/dvm.sh
+  append_to_zshrc 'export DVM_DIR="$HOME/.dvm"'
+  append_to_zshrc '[ -s "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"  # This loads dvm'
   append_to_zshrc '[[ -r $DVM_DIR/bash_completion ]] && . $DVM_DIR/bash_completion'
 fi
 ### end common-components/dvm
@@ -220,12 +233,6 @@ fancy_echo "Installing your personal additions from ~/.laptop.local ..."
     source ~/.laptop.local
   fi
 ### end common-components/personal-additions
-
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  fancy_echo "Installing oh-my-zsh ..."
-  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-fi
-### end common-components/oh-my-zsh
 
 fancy_echo "Install complete! Restart your computer ..."
 ### end common-components/footer
