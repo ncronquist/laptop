@@ -136,6 +136,12 @@ Contributing
 
 Please see [CONTRIBUTING.md](https://github.com/thoughtbot/laptop/blob/master/CONTRIBUTING.md).
 
+Todo
+----
+- Install Docker
+- Install Docker-Compose
+- Fix ALL THE BUGS
+
 License
 -------
 
