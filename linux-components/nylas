@@ -1,0 +1,10 @@
+if ($(app_exists nylas) == true); then
+  fancy_echo "$(skipping Nylas)"
+else
+  SLACK_VERSION=slack-desktop-2.0.3-amd64.deb
+
+  fancy_echo "Installing Nylas ..."
+    curl -o $HOME/Downloads/N1.deb https://edgehill.nylas.com/download?platform=linux-deb
+    sudo dpkg -i $HOME/Downloads/N1.deb
+    sudo apt-get install zenity # For desktop notifications
+fi

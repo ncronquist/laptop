@@ -1,6 +1,6 @@
-common-components/bash-shebang
-common-components/shared-functions
+common-components/sh-shebang
 common-components/header
+common-components/shared-functions
 common-components/exit-trap
 common-components/check-home-bin
 linux-components/distro-check

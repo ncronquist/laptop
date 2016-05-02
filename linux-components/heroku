@@ -1,4 +1,6 @@
-type heroku >/dev/null 2>&1 || {
+if ($(app_exists heroku) == true); then
+  fancy_echo "$(skipping Heroku)"
+else
   fancy_echo "Installing Heroku CLI client ..."
   curl -s https://toolbelt.heroku.com/install-ubuntu.sh | sh
-}
+fi

@@ -1,3 +1,10 @@
+fancy_echo "Update package index files from their sources"
+  sudo apt-get update
+
+fancy_echo "Upgrade installed packages"
+  sudo apt-get upgrade
+
+fancy_echo ""
 fancy_echo "Installing git, for source control management ..."
   sudo apt-get install -y git
 
@@ -19,11 +26,11 @@ fancy_echo "Installing tmux, to save project state and switch between projects .
 fancy_echo "Installing ImageMagick, to crop and resize images ..."
   sudo apt-get install -y imagemagick
 
-fancy_echo "Installing watch, to execute a program periodically and show the output ..."
-  sudo apt-get install -y watch
-
 fancy_echo "Installing curl ..."
   sudo apt-get install -y curl
+
+fancy_echo "Installing httpie ..."
+  sudo apt-get install -y httpie
 
 fancy_echo "Installing zsh ..."
   sudo apt-get install -y zsh

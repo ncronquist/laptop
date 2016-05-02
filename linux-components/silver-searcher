@@ -9,7 +9,10 @@ silver_searcher_from_source() {
   rm -rf /tmp/the_silver_searcher
 }
 
-if ! command -v ag >/dev/null; then
+# if (! type ag >/dev/null); then
+if ($(app_exists ag) == true); then
+  fancy_echo "$(skipping 'Ag (SilverSearcher)')"
+else
   fancy_echo "Installing The Silver Searcher (better than ack or grep) to search the contents of files ..."
 
   if apt-cache search silversearcher-ag  | grep "silversearcher-ag " &>/dev/null; then

@@ -1,0 +1,10 @@
+if ($(app_exists kubectl) == true); then
+  fancy_echo "$(skipping Kubectl)"
+else
+  KUBECTL_VERSION=1.2.3
+
+  fancy_echo "Installing Kubectl ..."
+  curl -O https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl
+  chmod +x kubectl
+  sudo mv kubectl /usr/local/bin/kubectl
+fi

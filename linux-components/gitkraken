@@ -1,0 +1,9 @@
+if ($(app_exists gitkraken) == true); then
+  fancy_echo "$(skipping Gitkraken)"
+else
+  GITKRAKEN_FILE=gitkraken-amd64.deb
+
+  fancy_echo "Installing Gitkraken ..."
+  curl -o $HOME/Downloads/$GITKRAKEN_FILE https://release.gitkraken.com/linux/$GITKRAKEN_FILE
+  sudo dpkg -i $HOME/Downloads/$GITKRAKEN_FILE
+fi

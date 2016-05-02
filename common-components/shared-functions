@@ -6,6 +6,18 @@ skipping() {
   echo "$@ already installed. Skipping ..."
 }
 
+app_exists() {
+  if (! type $1 >/dev/null); then
+    echo 'false'
+  else
+    echo 'true'
+  fi
+}
+
+lower_case() {
+  echo "$1" | awk '{print tolower($0)}'
+}
+
 append_to_zshrc() {
   local text="$1" zshrc
   local skip_new_line="$2"

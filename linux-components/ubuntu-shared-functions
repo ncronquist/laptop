@@ -1,0 +1,11 @@
+if [ -f /etc/lsb-release ]; then
+  . /etc/lsb-release
+  OS=$DISTRIB_ID
+  VER_NAME=$DISTRIB_CODENAME
+  VER=$DISTRIB_RELEASE
+else if [ -f /etc/os-release ]; then
+  . /etc/os-release
+  OS=$NAME
+  VER_NAME=$UBUNTU_CODENAME
+  VER=$VERSION_ID
+fi
