@@ -12,7 +12,7 @@ common-components/node-environment
 linux-components/silver-searcher
 common-components/rbenv
 common-components/ruby-environment
-linux-components/bundler
+common-components/bundler
 common-components/default-gems
 linux-components/heroku
 common-components/dvm

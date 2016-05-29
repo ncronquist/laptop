@@ -1,0 +1,49 @@
+fancy_echo "Add Apt Repositories ..."
+    add_apt_repository martin-frost/thoughtbot-rcm
+
+fancy_echo "Update package index files from their sources"
+    sudo apt-get update
+
+fancy_echo "Installing git, for source control management ..."
+  apt_install_or_upgrade git
+
+fancy_echo "Installing Ruby dependencies and libraries for common gem dependencies ..."
+    apt_install_or_upgrade libxslt1-dev
+    apt_install_or_upgrade libcurl4-openssl-dev
+    apt_install_or_upgrade libksba8
+    apt_install_or_upgrade libksba-dev
+    apt_install_or_upgrade libqtwebkit-dev
+    apt_install_or_upgrade libreadline-dev
+    apt_install_or_upgrade zlib1g-dev
+    apt_install_or_upgrade build-essential
+    apt_install_or_upgrade libssl-dev
+    apt_install_or_upgrade libyaml-dev
+    apt_install_or_upgrade libsqlite3-dev
+    apt_install_or_upgrade sqlite3
+    apt_install_or_upgrade libxml2-dev
+    apt_install_or_upgrade python-software-properties
+    apt_install_or_upgrade libffi-dev
+
+fancy_echo "Installing ctags, to index files for vim tab completion of methods, classes, variables ..."
+    apt_install_or_upgrade exuberant-ctags
+
+fancy_echo "Installing vim ..."
+    apt_install_or_upgrade vim-gtk
+
+fancy_echo "Installing tmux, to save project state and switch between projects ..."
+    apt_install_or_upgrade tmux
+
+fancy_echo "Installing ImageMagick, to crop and resize images ..."
+    apt_install_or_upgrade imagemagick
+
+fancy_echo "Installing curl ..."
+    apt_install_or_upgrade curl
+
+fancy_echo "Installing httpie ..."
+    apt_install_or_upgrade httpie
+
+fancy_echo "Installing zsh ..."
+    apt_install_or_upgrade zsh
+
+fancy_echo "Installing rcm ..."
+    apt_install_or_upgrade rcm
