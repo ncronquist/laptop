@@ -1,15 +1,44 @@
-#!/usr/bin/env bash
-### end common-components/bash-shebang
+#!/bin/sh
+### end common-components/sh-shebang
+
+# This is DevStart; A shell script to quickly get your development machine
+# up and running.
+# This file is auto-generated. Do not edit it by hand unless you know what
+# you're doing. Please see 'CONTRIBUTING.md' for more information.
+### end common-components/header
+
+trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
+
+# Exit immediately if a simple command exits with a non-zero status
+set -e
+### end common-components/exit-trap
 
 fancy_echo() {
   printf "\n%b\n" "$1"
 }
 
+skipping() {
+  echo "$@ already installed. Skipping ..."
+}
+
+app_exists() {
+  if (! type $1 >/dev/null); then
+    echo 'false'
+  else
+    echo 'true'
+  fi
+}
+
+lower_case() {
+  echo "$1" | awk '{print tolower($0)}'
+}
+
 append_to_zshrc() {
   local text="$1" zshrc
   local skip_new_line="$2"
+  echo "SKIP NEW LINE: $skip_new_line"
 
-  if [[ -w "$HOME/.zshrc.local" ]]; then
+  if [ -w "$HOME/.zshrc.local" ]; then
     zshrc="$HOME/.zshrc.local"
   else
     zshrc="$HOME/.zshrc"
@@ -23,16 +52,73 @@ append_to_zshrc() {
     fi
   fi
 }
+
+download_file() {
+    local url="$1" # Download url
+    local fileName="$2" # Filename (including path) where you would like the file placed
+
+    # -s - silent or quiet mode
+    # -S - when used with -s this will show the error if it fails
+    # -L - allows for 301 redirects
+    curl -sSL $url -o $filename
+}
+
+install_if_missing() {
+    local app=$1
+
+    if ($(app_exists $app) == true); then
+      fancy_echo "$(skipping $app)"
+    else
+        install_$app
+    fi
+}
 ### end common-components/shared-functions
 
-# This file is auto-generated. Do not edit it by hand unless you know what
-# you're doing. Please see 'CONTRIBUTING.md' for more information.
-### end common-components/header
+apt_install_or_upgrade() {
+    # Since apt-get install also does upgrades, I don't think there is any
+    # reason to check if the app is installed first or not... Leaving this code
+    # for now though.
+    # if apt_is_installed "$1"; then
+    #     echo "Check if $1 is upgradeable"
+    # else
+    #     echo "Install $1"
+    # fi
+    sudo apt-get install -y "$1"
+}
 
-trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
+apt_is_installed() {
+    if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        # 1 = false
+        echo "NOT INSTALLED"
+        return 1;
+    else
+        # 0 = true
+        echo "INSTALLED"
+        return 0;
+    fi
+}
 
-set -e
-### end common-components/exit-trap
+add_apt_repository() {
+    if ! apt_repo_exists "$1"; then
+        echo "Add apt repository ppa:$1"
+        sudo add-apt-repository -y "ppa:$1"
+    else
+        echo "Apt repository $1 already exists..."
+    fi
+}
+
+apt_repo_exists() {
+    if [ $(find /etc/apt/ -name *.list | xargs cat | grep  ^[[:space:]]*deb | grep -c "$1") -eq 0 ]; then
+        # echo "Doesn't exist"
+        return 1;
+    else
+        # echo "Exists"
+        return 0;
+    fi
+}
+
+apt_is_installed $1
+### end distros/debian/shared-functions
 
 if [ ! -d "$HOME/.bin/" ]; then
   mkdir "$HOME/.bin"
@@ -49,45 +135,61 @@ if ! grep -qiE 'wheezy|jessie|precise|trusty|xenial' /etc/os-release; then
   fancy_echo "Sorry! we don't currently support that distro."
   exit 1
 fi
-### end linux-components/distro-check
+### end distros/debian/distro-check
+
+fancy_echo "Add Apt Repositories ..."
+    add_apt_repository martin-frost/thoughtbot-rcm
+
+fancy_echo "Update package index files from their sources"
+    sudo apt-get update
 
 fancy_echo "Installing git, for source control management ..."
-  sudo apt-get install -y git
+  apt_install_or_upgrade git
 
-fancy_echo "Installing libraries for common gem dependencies ..."
-  sudo apt-get install -y libxslt1-dev libcurl4-openssl-dev libksba8 libksba-dev libqtwebkit-dev libreadline-dev
-
-fancy_echo "Installing Ruby dependencies ..."
-  sudo apt-get install -y zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+fancy_echo "Installing Ruby dependencies and libraries for common gem dependencies ..."
+    apt_install_or_upgrade libxslt1-dev
+    apt_install_or_upgrade libcurl4-openssl-dev
+    apt_install_or_upgrade libksba8
+    apt_install_or_upgrade libksba-dev
+    apt_install_or_upgrade libqtwebkit-dev
+    apt_install_or_upgrade libreadline-dev
+    apt_install_or_upgrade zlib1g-dev
+    apt_install_or_upgrade build-essential
+    apt_install_or_upgrade libssl-dev
+    apt_install_or_upgrade libyaml-dev
+    apt_install_or_upgrade libsqlite3-dev
+    apt_install_or_upgrade sqlite3
+    apt_install_or_upgrade libxml2-dev
+    apt_install_or_upgrade python-software-properties
+    apt_install_or_upgrade libffi-dev
 
 fancy_echo "Installing ctags, to index files for vim tab completion of methods, classes, variables ..."
-  sudo apt-get install -y exuberant-ctags
+    apt_install_or_upgrade exuberant-ctags
 
 fancy_echo "Installing vim ..."
-  sudo apt-get install -y vim-gtk
+    apt_install_or_upgrade vim-gtk
 
 fancy_echo "Installing tmux, to save project state and switch between projects ..."
-  sudo apt-get install -y tmux
+    apt_install_or_upgrade tmux
 
 fancy_echo "Installing ImageMagick, to crop and resize images ..."
-  sudo apt-get install -y imagemagick
-
-fancy_echo "Installing watch, to execute a program periodically and show the output ..."
-  sudo apt-get install -y watch
+    apt_install_or_upgrade imagemagick
 
 fancy_echo "Installing curl ..."
-  sudo apt-get install -y curl
+    apt_install_or_upgrade curl
+
+fancy_echo "Installing httpie ..."
+    apt_install_or_upgrade httpie
 
 fancy_echo "Installing zsh ..."
-  sudo apt-get install -y zsh
+    apt_install_or_upgrade zsh
 
-type rcm >/dev/null 2>&1 || {
-  fancy_echo "Installing rcm ..."
-  sudo add-apt-repository ppa:martin-frost/thoughtbot-rcm
-  sudo apt-get update
-  sudo apt-get install -y rcm
-}
-### end linux-components/debian-derivative-packages
+fancy_echo "Installing rcm ..."
+    apt_install_or_upgrade rcm
+
+fancy_echo "Installing python ..."
+    apt_install_or_upgrade python2.7
+### end distros/debian/debian-derivative-packages
 
 fancy_echo "Changing your shell to zsh ..."
   chsh -s $(which zsh)
@@ -101,6 +203,29 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
   cp $HOME/.oh-my-zsh/templates/zshrc.zsh-template $HOME/.zshrc
 fi
 ### end common-components/oh-my-zsh
+
+# if ($(app_exists kubectl) == true); then
+#   fancy_echo "$(skipping Kubectl)"
+# else
+#   KUBECTL_VERSION=1.2.3
+#
+#   fancy_echo "Installing Kubectl ..."
+#   curl -O https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl
+#   chmod +x kubectl
+#   sudo mv kubectl /usr/local/bin/kubectl
+# fi
+
+install_kubectl() {
+    local kubectl_version="1.2.3"
+    local url="https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl"
+    local fileName="$HOME/Downloads/kubectl"
+
+    download_file $url $fileName
+
+    chmod -x $HOME/Downloads/fileName
+    sudo mv fileName /usr/local/bin/kubectl
+}
+### end common-components/kubectl
 
 if [ ! -d "$HOME/.nvm" ]; then
   fancy_echo "Installing nvm, to change Node versions ..."
@@ -120,27 +245,21 @@ fancy_echo "Installing Node $node_version ..."
   nvm alias default $node_version
 ### end common-components/node-environment
 
-silver_searcher_from_source() {
-  git clone git://github.com/ggreer/the_silver_searcher.git /tmp/the_silver_searcher
-  sudo apt-get install -y automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
-  sh /tmp/the_silver_searcher/build.sh
-  cd /tmp/the_silver_searcher
-  sh build.sh
-  sudo make install
-  cd
-  rm -rf /tmp/the_silver_searcher
+install_pip() {
+    local url=https://bootstrap.pypa.io/get-pip.py
+    local fileName=get-pip.py
+
+    download_file  $url $fileName
+    sudo python2.7 $fileName
 }
+### end common-components/pip
 
-if ! command -v ag >/dev/null; then
-  fancy_echo "Installing The Silver Searcher (better than ack or grep) to search the contents of files ..."
+# Install awscli
+sudo pip install awscli
 
-  if apt-cache search silversearcher-ag  | grep "silversearcher-ag " &>/dev/null; then
-    sudo apt-get install silversearcher-ag
-  else
-    silver_searcher_from_source
-  fi
-fi
-### end linux-components/silver-searcher
+# Upgrade an existing awscli
+sudo pip install --upgrade awscli
+### end common-components/pip-installs
 
 if [[ ! -d "$HOME/.rbenv" ]]; then
   fancy_echo "Installing rbenv, to change Ruby versions ..."
@@ -193,7 +312,7 @@ fancy_echo "Installing Rails for Ruby web development ..."
 fancy_echo "Configuring Bundler for faster, parallel gem installation ..."
   number_of_cores=$(nproc)
   bundle config --global jobs $((number_of_cores - 1))
-### end linux-components/bundler
+### end common-components/bundler
 
 # Examples: Not currently installing any gems
 # fancy_echo "Installing Suspenders, thoughtbot's Rails template ..."
@@ -203,12 +322,6 @@ fancy_echo "Configuring Bundler for faster, parallel gem installation ..."
 # production parity ..."
 #  gem install parity --no-document
 ### end common-components/default-gems
-
-type heroku >/dev/null 2>&1 || {
-  fancy_echo "Installing Heroku CLI client ..."
-  curl -s https://toolbelt.heroku.com/install-ubuntu.sh | sh
-}
-### end linux-components/heroku
 
 if [[ ! -d "$HOME/.dvm" ]]; then
   fancy_echo "Installing dvm, to change Docker versions ..."

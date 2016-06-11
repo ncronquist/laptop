@@ -1,0 +1,10 @@
+install_kubectl() {
+    local kubectl_version="1.2.3"
+    local url="https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl"
+    local fileName="$HOME/Downloads/kubectl"
+
+    download_file $url $fileName
+
+    chmod -x $HOME/Downloads/fileName
+    sudo mv fileName /usr/local/bin/kubectl
+}

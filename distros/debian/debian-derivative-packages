@@ -47,3 +47,6 @@ fancy_echo "Installing zsh ..."
 
 fancy_echo "Installing rcm ..."
     apt_install_or_upgrade rcm
+
+fancy_echo "Installing python ..."
+    apt_install_or_upgrade python2.7

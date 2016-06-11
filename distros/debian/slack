@@ -1,0 +1,17 @@
+# if ($(app_exists slack) == true); then
+#   fancy_echo "$(skipping Slack)"
+# else
+#   SLACK_VERSION=slack-desktop-2.0.3-amd64.deb
+#
+#   fancy_echo "Installing Slack ..."
+#     curl -o $HOME/Downloads/$SLACK_VERSION https://downloads.slack-edge.com/linux_releases/$SLACK_VERSION
+#     sudo dpkg -i $HOME/Downloads/$SLACK_VERSION
+# fi
+
+install_slack() {
+    SLACK_VERSION=slack-desktop-2.0.3-amd64.deb
+    local file
+
+    download_file https://downloads.slack-edge.com/linux_releases/$SLACK_VERSION $SLACK_VERSION
+    sudo dpkg -i $HOME/Downloads/$SLACK_VERSION
+}

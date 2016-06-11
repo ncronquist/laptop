@@ -1,7 +1,7 @@
-Laptop
-======
+Linux-DevStart
+===============
 
-Laptop is a script to set up an Ubuntu laptop for software development.
+Linux-DevStart is a script to set up an Ubuntu laptop for software development.
 
 Requirements
 ------------
@@ -11,8 +11,10 @@ Requirements
 We support:
 
 - [14.04: Trusty Tahr]
+- [16.04: Xenial Xerus]
 
 [14.04: Trusty Tahr]: https://wiki.ubuntu.com/TrustyTahr/ReleaseNotes
+[16.04: Xenial Xerus]: https://wiki.ubuntu.com/XenialXerus/ReleaseNotes
 
 Install
 -------
