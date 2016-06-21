@@ -1,22 +1,61 @@
 fancy_echo() {
-  printf "\n%b\n" "$1"
+  local fmt="$1"; shift
+
+  # shellcheck disable=SC2059
+  printf "\n$fmt\n" "$@"
+}
+
+skipping() {
+  echo "$@ already installed. Skipping ..."
+}
+
+app_exists() {
+  if (! type $1 >/dev/null); then
+    echo 'false'
+  else
+    echo 'true'
+  fi
+}
+
+lower_case() {
+  echo "$1" | awk '{print tolower($0)}'
 }
 
 append_to_zshrc() {
   local text="$1" zshrc
-  local skip_new_line="$2"
+  local skip_new_line="${2:-0}"
 
-  if [[ -w "$HOME/.zshrc.local" ]]; then
+  if [ -w "$HOME/.zshrc.local" ]; then
     zshrc="$HOME/.zshrc.local"
   else
     zshrc="$HOME/.zshrc"
   fi
 
   if ! grep -Fqs "$text" "$zshrc"; then
-    if (( skip_new_line )); then
+    if [ "$skip_new_line" -eq 1 ]; then
       printf "%s\n" "$text" >> "$zshrc"
     else
       printf "\n%s\n" "$text" >> "$zshrc"
     fi
   fi
+}
+
+download_file() {
+    local url="$1" # Download url
+    local fileName="$2" # Filename (including path) where you would like the file placed
+
+    # -s - silent or quiet mode
+    # -S - when used with -s this will show the error if it fails
+    # -L - allows for 301 redirects
+    curl -sSL $url -o $filename
+}
+
+install_if_missing() {
+    local app=$1
+
+    if ($(app_exists $app) == true); then
+      fancy_echo "$(skipping $app)"
+    else
+        install_$app
+    fi
 }

@@ -1,0 +1,5 @@
+# Check current shell
+echo $0
+
+# Check default shell
+echo $SHELL

@@ -18,7 +18,7 @@ are fine, but be sure they are necessary first.
 
 3) Render the installation files from the manifests via the `./bin/build.sh`
 script, run from the repo root. You should see your changes reflected in the
-rendered `linux`, `linux-preqrequisites`, or `mac` files. `git diff` is your
+rendered `linux` or `linux-preqrequisites` files. `git diff` is your
 friend - check the output. If it looks as expected, commit the rendered
 installation files.
 

@@ -1,0 +1,9 @@
+install_pip() {
+    local url=https://bootstrap.pypa.io/get-pip.py
+    local fileName=get-pip.py
+
+    download_file  $url $fileName
+    sudo python2.7 $fileName
+}
+
+install_if_missing pip

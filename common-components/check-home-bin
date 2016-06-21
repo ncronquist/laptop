@@ -1,5 +1,9 @@
-if [[ ! -d "$HOME/.bin/" ]]; then
+if [ ! -d "$HOME/.bin/" ]; then
   mkdir "$HOME/.bin"
+fi
+
+if [ ! -d "$HOME/Downloads/" ]; then
+    mkdir "$HOME/Downloads"
 fi
 
 if [ ! -f "$HOME/.zshrc" ]; then

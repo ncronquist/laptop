@@ -1,0 +1,12 @@
+version: '2'
+services:
+    ubuntu1404:
+        container_name: ubuntu1404
+        image: ncronquist/linux-devstart:ubuntu14.04
+        volumes:
+            - ${DEVSTART_PWD}:/home/ubuntu/linux-devstart
+    ubuntu1604:
+        container_name: ubuntu1604
+        image: ncronquist/linux-devstart:ubuntu16.04
+        volumes:
+            - ${DEVSTART_PWD}:/home/ubuntu/linux-devstart

@@ -1,0 +1,42 @@
+apt_install_or_upgrade() {
+    # Since apt-get install also does upgrades, I don't think there is any
+    # reason to check if the app is installed first or not... Leaving this code
+    # for now though.
+    # if apt_is_installed "$1"; then
+    #     echo "Check if $1 is upgradeable"
+    # else
+    #     echo "Install $1"
+    # fi
+    sudo apt-get install -y "$1"
+}
+
+apt_is_installed() {
+    if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        # 1 = false
+        echo "NOT INSTALLED"
+        return 1;
+    else
+        # 0 = true
+        echo "INSTALLED"
+        return 0;
+    fi
+}
+
+add_apt_repository() {
+    if ! apt_repo_exists "$1"; then
+        echo "Add apt repository ppa:$1"
+        sudo add-apt-repository -y "ppa:$1"
+    else
+        echo "Apt repository $1 already exists..."
+    fi
+}
+
+apt_repo_exists() {
+    if [ $(find /etc/apt/ -name *.list | xargs cat | grep  ^[[:space:]]*deb | grep -c "$1") -eq 0 ]; then
+        # echo "Doesn't exist"
+        return 1;
+    else
+        # echo "Exists"
+        return 0;
+    fi
+}

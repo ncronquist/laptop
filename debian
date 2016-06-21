@@ -1,0 +1,355 @@
+#!/usr/bin/env bash
+### end common-components/sh-shebang
+
+# This is DevStart; A shell script to quickly get your development machine
+# up and running.
+# This file is auto-generated. Do not edit it by hand unless you know what
+# you're doing. Please see 'CONTRIBUTING.md' for more information.
+### end common-components/header
+
+trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
+
+# Exit immediately if a simple command exits with a non-zero status
+set -e
+### end common-components/exit-trap
+
+fancy_echo() {
+  local fmt="$1"; shift
+
+  # shellcheck disable=SC2059
+  printf "\n$fmt\n" "$@"
+}
+
+skipping() {
+  echo "$@ already installed. Skipping ..."
+}
+
+app_exists() {
+  if (! type $1 >/dev/null); then
+    echo 'false'
+  else
+    echo 'true'
+  fi
+}
+
+lower_case() {
+  echo "$1" | awk '{print tolower($0)}'
+}
+
+append_to_zshrc() {
+  local text="$1" zshrc
+  local skip_new_line="${2:-0}"
+
+  if [ -w "$HOME/.zshrc.local" ]; then
+    zshrc="$HOME/.zshrc.local"
+  else
+    zshrc="$HOME/.zshrc"
+  fi
+
+  if ! grep -Fqs "$text" "$zshrc"; then
+    if [ "$skip_new_line" -eq 1 ]; then
+      printf "%s\n" "$text" >> "$zshrc"
+    else
+      printf "\n%s\n" "$text" >> "$zshrc"
+    fi
+  fi
+}
+
+download_file() {
+    local url="$1" # Download url
+    local filename="$2" # Filename (including path) where you would like the file placed
+
+    echo "URL: $url"
+    echo "FILENAME: $filename"
+
+    # -s - silent or quiet mode
+    # -S - when used with -s this will show the error if it fails
+    # -L - allows for 301 redirects
+    curl -sSL $url -o $filename
+}
+
+install_if_missing() {
+    local app=$1
+
+    if ($(app_exists $app) == true); then
+      fancy_echo "$(skipping $app)"
+    else
+        install_$app
+    fi
+}
+### end common-components/shared-functions
+
+apt_install_or_upgrade() {
+    # Since apt-get install also does upgrades, I don't think there is any
+    # reason to check if the app is installed first or not... Leaving this code
+    # for now though.
+    # if apt_is_installed "$1"; then
+    #     echo "Check if $1 is upgradeable"
+    # else
+    #     echo "Install $1"
+    # fi
+    sudo apt-get install -y "$1"
+}
+
+apt_is_installed() {
+    if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        # 1 = false
+        echo "NOT INSTALLED"
+        return 1;
+    else
+        # 0 = true
+        echo "INSTALLED"
+        return 0;
+    fi
+}
+
+add_apt_repository() {
+    if ! apt_repo_exists "$1"; then
+        echo "Add apt repository ppa:$1"
+        sudo add-apt-repository -y "ppa:$1"
+    else
+        echo "Apt repository $1 already exists..."
+    fi
+}
+
+apt_repo_exists() {
+    if [ $(find /etc/apt/ -name *.list | xargs cat | grep  ^[[:space:]]*deb | grep -c "$1") -eq 0 ]; then
+        # echo "Doesn't exist"
+        return 1;
+    else
+        # echo "Exists"
+        return 0;
+    fi
+}
+### end distros/debian/shared-functions
+
+if [ ! -d "$HOME/.bin/" ]; then
+  mkdir "$HOME/.bin"
+fi
+
+if [ ! -f "$HOME/.zshrc" ]; then
+  touch "$HOME/.zshrc"
+fi
+
+append_to_zshrc 'export PATH="$HOME/.bin:$PATH"'
+### end common-components/check-home-bin
+
+# Currently Supported Version
+# Code Name | Version
+# ----------|----------
+# Wheezy    | Debian 7
+# Jessie    | Debian 8
+# Precise   | Ubuntu 12.04
+# Trusty    | Ubuntu 14.04
+# Xenial    | Ubuntu 16.04
+
+if ! grep -qiE 'wheezy|jessie|precise|trusty|xenial' /etc/os-release; then
+  fancy_echo "Sorry! we don't currently support that distro."
+  exit 1
+fi
+### end distros/debian/distro-check
+
+fancy_echo "Add Apt Repositories ..."
+    add_apt_repository martin-frost/thoughtbot-rcm
+
+fancy_echo "Update package index files from their sources"
+    sudo apt-get update
+
+fancy_echo "Installing git, for source control management ..."
+  apt_install_or_upgrade git
+
+fancy_echo "Installing Ruby dependencies and libraries for common gem dependencies ..."
+    apt_install_or_upgrade libxslt1-dev
+    apt_install_or_upgrade libcurl4-openssl-dev
+    apt_install_or_upgrade libksba8
+    apt_install_or_upgrade libksba-dev
+    apt_install_or_upgrade libqtwebkit-dev
+    apt_install_or_upgrade libreadline-dev
+    apt_install_or_upgrade zlib1g-dev
+    apt_install_or_upgrade build-essential
+    apt_install_or_upgrade libssl-dev
+    apt_install_or_upgrade libyaml-dev
+    apt_install_or_upgrade libsqlite3-dev
+    apt_install_or_upgrade sqlite3
+    apt_install_or_upgrade libxml2-dev
+    apt_install_or_upgrade python-software-properties
+    apt_install_or_upgrade libffi-dev
+
+fancy_echo "Installing ctags, to index files for vim tab completion of methods, classes, variables ..."
+    apt_install_or_upgrade exuberant-ctags
+
+fancy_echo "Installing vim ..."
+    apt_install_or_upgrade vim-gtk
+
+fancy_echo "Installing tmux, to save project state and switch between projects ..."
+    apt_install_or_upgrade tmux
+
+fancy_echo "Installing ImageMagick, to crop and resize images ..."
+    apt_install_or_upgrade imagemagick
+
+fancy_echo "Installing curl ..."
+    apt_install_or_upgrade curl
+
+fancy_echo "Installing httpie ..."
+    apt_install_or_upgrade httpie
+
+fancy_echo "Installing zsh ..."
+    apt_install_or_upgrade zsh
+
+fancy_echo "Installing rcm ..."
+    apt_install_or_upgrade rcm
+
+fancy_echo "Installing python ..."
+    apt_install_or_upgrade python2.7
+### end distros/debian/debian-derivative-packages
+
+fancy_echo "Changing your shell to zsh ..."
+  sudo chsh -s $(which zsh)
+### end common-components/zsh
+
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  fancy_echo "Installing oh-my-zsh ..."
+  git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh
+  cp $HOME/.zshrc $HOME/.zshrc.pre-oh-my-zsh
+  cp $HOME/.oh-my-zsh/templates/zshrc.zsh-template $HOME/.zshrc
+  # Copy the content from the original zshrc file to the new zshrc file
+  cat $HOME/.zshrc.pre-oh-my-zsh >> $HOME/.zshrc
+fi
+### end common-components/oh-my-zsh
+
+install_kubectl() {
+    local kubectl_version="1.2.3"
+    local url="https://storage.googleapis.com/kubernetes-release/release/v$kubectl_version/bin/linux/amd64/kubectl"
+    local filename="$HOME/Downloads/kubectl"
+
+    download_file $url $filename
+
+    chmod -x $filename
+    sudo mv $filename /usr/local/bin/kubectl
+}
+
+install_if_missing kubectl
+### end common-components/kubectl
+
+if [ ! -d "$HOME/.nvm" ]; then
+  fancy_echo "Installing nvm, to change Node versions ..."
+  git clone https://github.com/creationix/nvm.git $HOME/.nvm && pushd $HOME/.nvm && git checkout `git describe --abbrev=0 --tags` && popd
+fi
+
+. $HOME/.nvm/nvm.sh
+append_to_zshrc 'export NVM_DIR="$HOME/.nvm"'
+append_to_zshrc '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm'
+### end common-components/nvm
+
+node_version="4.4.3"
+
+fancy_echo "Installing Node $node_version ..."
+  nvm install $node_version
+  nvm use $node_version
+  nvm alias default $node_version
+### end common-components/node-environment
+
+install_pip() {
+    local url=https://bootstrap.pypa.io/get-pip.py
+    local fileName=get-pip.py
+
+    download_file  $url $fileName
+    sudo python2.7 $fileName
+}
+
+install_if_missing pip
+### end common-components/pip
+
+# Install awscli
+sudo pip install awscli
+
+# Upgrade an existing awscli
+sudo pip install --upgrade awscli
+### end common-components/pip-installs
+
+if [[ ! -d "$HOME/.rbenv" ]]; then
+  fancy_echo "Installing rbenv, to change Ruby versions ..."
+    git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
+fi
+
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+append_to_zshrc 'export PATH="$HOME/.rbenv/bin:$PATH"'
+append_to_zshrc 'eval "$(rbenv init - zsh --no-rehash)"'
+
+if [[ ! -d "$HOME/.rbenv/plugins/rbenv-gem-rehash" ]]; then
+  fancy_echo "Installing rbenv-gem-rehash so the shell automatically picks up binaries after installing gems with binaries..."
+    git clone https://github.com/sstephenson/rbenv-gem-rehash.git $HOME/.rbenv/plugins/rbenv-gem-rehash
+fi
+
+if [[ ! -d "$HOME/.rbenv/plugins/ruby-build" ]]; then
+  fancy_echo "Installing ruby-build, to install Rubies ..."
+    git clone https://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+fi
+
+export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
+append_to_zshrc 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"'
+### end common-components/rbenv
+
+ruby_version="2.3.1"
+rails_environment="4.2.6"
+
+fancy_echo "Installing Ruby $ruby_version ..."
+  rbenv install -s "$ruby_version"
+
+fancy_echo "Setting $ruby_version as global default Ruby ..."
+  rbenv global "$ruby_version"
+  rbenv rehash
+
+fancy_echo "Updating to latest Rubygems version ..."
+  gem update --system
+### end common-components/ruby-environment
+
+fancy_echo "Installing Bundler to install project-specific Ruby gems ..."
+  gem install bundler --no-document --pre
+  rbenv rehash
+
+fancy_echo "Configuring Bundler for faster, parallel gem installation ..."
+  number_of_cores=$(nproc)
+  bundle config --global jobs $((number_of_cores - 1))
+### end common-components/bundler
+
+fancy_echo "Installing Rails for Ruby web development ..."
+  gem install rails -v $rails_environment
+  rbenv rehash
+### end common-components/rails
+
+# Examples: Not currently installing any gems
+# fancy_echo "Installing Better Errors, to provide a better error page for Rails apps ..."
+#  gem install better_errors
+### end common-components/default-gems
+
+if [[ ! -d "$HOME/.dvm" ]]; then
+  fancy_echo "Installing dvm, to change Docker versions ..."
+  curl -sL https://download.getcarina.com/dvm/latest/install.sh | sh
+fi
+
+. $HOME/.dvm/dvm.sh
+export DVM_DIR="$HOME/.dvm"
+[ -s "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"  # This loads dvm
+[ -r $DVM_DIR/bash_completion ] && . $DVM_DIR/bash_completion
+append_to_zshrc 'export DVM_DIR="$HOME/.dvm"'
+append_to_zshrc '[ -s "$DVM_DIR/dvm.sh" ] && . "$DVM_DIR/dvm.sh"  # This loads dvm'
+append_to_zshrc '[[ -r $DVM_DIR/bash_completion ]] && . $DVM_DIR/bash_completion'
+### end common-components/dvm
+
+docker_version="1.10.2"
+
+fancy_echo "Installing Docker $docker_version ..."
+  dvm install $docker_version
+  dvm use $docker_version
+### end common-components/docker-environment
+
+fancy_echo "Installing your personal additions from ~/.laptop.local ..."
+  if [[ -f ~/.laptop.local ]]; then
+    . ~/.laptop.local
+  fi
+### end common-components/personal-additions
+
+fancy_echo "Install complete! Restart your computer ..."
+### end common-components/footer

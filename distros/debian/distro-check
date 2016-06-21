@@ -1,0 +1,13 @@
+# Currently Supported Version
+# Code Name | Version
+# ----------|----------
+# Wheezy    | Debian 7
+# Jessie    | Debian 8
+# Precise   | Ubuntu 12.04
+# Trusty    | Ubuntu 14.04
+# Xenial    | Ubuntu 16.04
+
+if ! grep -qiE 'wheezy|jessie|precise|trusty|xenial' /etc/os-release; then
+  fancy_echo "Sorry! we don't currently support that distro."
+  exit 1
+fi

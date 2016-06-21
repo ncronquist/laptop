@@ -1,0 +1,63 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+  echo "usage: dev.sh <command> [<args>]
+
+Some useful commands are:
+run-tests      Run tests
+bash           Start a bash shell in a specified container
+               - Container Name (eg. ubuntu1404, ubuntu1604)
+cleanup        Cleans up docker containers and images"
+}
+
+run_tests() {
+    echo "Run tests for Ubuntu 14.04; Root password is ubuntu"
+    docker-compose run ubuntu1404 bash /home/ubuntu/linux-devstart/tests/debian-tests.sh
+    # docker start -ai $(docker ps -a -q --filter ancestor=ncronquist/linux-devstart:ubuntu14.04)
+    echo "Run tests for Ubuntu 16.04; Root password is ubuntu"
+    docker-compose run ubuntu1604 bash /home/ubuntu/linux-devstart/tests/debian-tests.sh
+}
+
+bash() {
+    local container_name=$1
+
+    docker-compose run $container_name bash
+}
+
+cleanup() {
+    docker-compose kill -s SIGKILL
+    docker-compose rm -f --all
+    docker rm $(docker ps -a -q --filter ancestor=ncronquist/linux-devstart:ubuntu14.04)
+    docker rm $(docker ps -a -q --filter ancestor=ncronquist/linux-devstart:ubuntu16.04)
+}
+
+set_env_vars() {
+    export DEVSTART_PWD="$(pwd)"
+}
+
+main() {
+  set_env_vars
+  command="$1"
+  case $command in
+    "" | "-h" | "--help")
+      usage
+      ;;
+    "run-tests")
+      run_tests
+      ;;
+    "bash")
+      shift
+      bash "$@"
+      ;;
+    "cleanup")
+      cleanup
+      ;;
+    *)
+      usage
+      ;;
+  esac
+}
+
+main "$@"

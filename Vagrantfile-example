@@ -1,0 +1,84 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require "yaml"
+
+# Custom Errors - Required for EnvironmentVariableMissingError
+require File.join(File.dirname(__FILE__), "providers", "vagrant", "errors.rb")
+
+# Official CoreOS channel from which updates should be downloaded
+$update_channel = "stable"
+
+# Version of CoreOS we're locked on
+$box_version = "1010.5.0"
+
+# Share additional folders to the CoreOS VMs
+# For example,
+# $shared_folders = {'/path/on/host' => '/path/on/guest', '/home/foo/app' => '/app'}
+# or, to map host folders to guest folders of the same name,
+# $shared_folders = Hash[*['/home/foo/app1', '/home/foo/app2'].map{|d| [d, d]}.flatten]
+$shared_folders = {'.' => '/home/core/laptop'}
+
+# Enable port forwarding from guest(s) to host machine, syntax is:
+# { 80 => 8080 }, auto correction is enabled by default.
+# 28015 = RethinkDB Client
+# 29015 = RethinkDB cluster
+# 8888  = Remapping of RethinkDB admin site
+# 8080  = Receipt API
+# 5555  = Node Debug Port
+# 5858  = Mocha Debug Port
+# 9324  = ElasticMQL
+# 3000  = Image Service Static Asset Files
+# 2375  = Docker's TCP port
+$forwarded_ports = { 2375 => 2375 }
+
+# VM Settings
+$vm_gui = false
+$vm_memory = 1024
+$vm_cpus = 1
+
+# Based on the settings, generate a token on every vagrant up and create our
+# cloud config based off the supplied template.
+CLOUD_CONFIG_TEMPLATE_PATH = File.join(File.dirname(__FILE__), "providers", "vagrant", "user-data.yml.tpl")
+CLOUD_CONFIG_PATH = CLOUD_CONFIG_TEMPLATE_PATH.slice(0, CLOUD_CONFIG_TEMPLATE_PATH.length - 4)
+
+data = YAML.load(IO.readlines(CLOUD_CONFIG_TEMPLATE_PATH)[1..-1].join)
+
+yaml = YAML.dump(data)
+File.open(CLOUD_CONFIG_PATH, "w") {
+  |file| file.write("#cloud-config\n\n#{yaml}")
+}
+
+Vagrant.configure(2) do |config|
+  # Always use Vagrants insecure key
+  config.ssh.insert_key = false
+
+  config.vm.box = "coreos-%s" % $update_channel
+  config.vm.box_version = "= %s" % $box_version
+  config.vm.box_url = "http://%s.release.core-os.net/amd64-usr/%s/coreos_production_vagrant_vmware_fusion.json" % [$update_channel, $box_version]
+
+  $forwarded_ports.each do |guest, host|
+    config.vm.network "forwarded_port", guest: guest, host: host, auto_correct: true
+  end
+
+  config.vm.provider :vmware_fusion do |vm|
+    vm.gui = $vm_gui
+    vm.vmx["memsize"] = $vm_memory
+    vm.vmx["numvcpus"] = $vm_cpus
+  end
+
+  # Set a static ip for the vm so that we can correctly configure elastic
+  # environment variables
+  ip = "172.17.7.100"
+  config.vm.network :private_network, ip: ip
+
+  host_ssh_dir = ENV["HOME"] + "/.ssh"
+  config.vm.synced_folder host_ssh_dir, "/home/core/host_ssh", id: "ssh", :nfs => true, :mount_options => ['nolock,vers=3,udp']
+
+  $shared_folders.each_with_index do |(host_folder, guest_folder), index|
+    config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "core-share%02d" % index, nfs: true, mount_options: ['nolock,vers=3,udp']
+  end
+
+  config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
+  config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+end

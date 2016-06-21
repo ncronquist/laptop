@@ -1,0 +1,8 @@
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  fancy_echo "Installing oh-my-zsh ..."
+  git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh
+  cp $HOME/.zshrc $HOME/.zshrc.pre-oh-my-zsh
+  cp $HOME/.oh-my-zsh/templates/zshrc.zsh-template $HOME/.zshrc
+  # Copy the content from the original zshrc file to the new zshrc file
+  cat $HOME/.zshrc.pre-oh-my-zsh >> $HOME/.zshrc
+fi
