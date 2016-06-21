@@ -40,5 +40,3 @@ apt_repo_exists() {
         return 0;
     fi
 }
-
-apt_is_installed $1

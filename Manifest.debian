@@ -16,6 +16,7 @@ common-components/pip-installs
 common-components/rbenv
 common-components/ruby-environment
 common-components/bundler
+common-components/rails
 common-components/default-gems
 common-components/dvm
 common-components/docker-environment

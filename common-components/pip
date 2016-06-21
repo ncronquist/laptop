@@ -5,3 +5,5 @@ install_pip() {
     download_file  $url $fileName
     sudo python2.7 $fileName
 }
+
+install_if_missing pip

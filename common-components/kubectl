@@ -8,3 +8,5 @@ install_kubectl() {
     chmod -x $HOME/Downloads/fileName
     sudo mv fileName /usr/local/bin/kubectl
 }
+
+install_if_missing kubectl

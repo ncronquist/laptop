@@ -1,6 +1,5 @@
 docker_version="1.10.2"
 
 fancy_echo "Installing Docker $docker_version ..."
-  source $HOME/.dvm/dvm.sh
   dvm install $docker_version
   dvm use $docker_version

@@ -1,8 +1,5 @@
-ruby_version="2.3.0"
+ruby_version="2.3.1"
 rails_environment="4.2.6"
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
-export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
 fancy_echo "Installing Ruby $ruby_version ..."
   rbenv install -s "$ruby_version"
@@ -13,10 +10,3 @@ fancy_echo "Setting $ruby_version as global default Ruby ..."
 
 fancy_echo "Updating to latest Rubygems version ..."
   gem update --system
-
-fancy_echo "Installing Bundler to install project-specific Ruby gems ..."
-  gem install bundler --no-document --pre
-
-fancy_echo "Installing Rails for Ruby web development ..."
-  gem install rails -v $rails_environment
-  rbenv rehash

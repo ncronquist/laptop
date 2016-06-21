@@ -1,0 +1,3 @@
+fancy_echo "Installing Rails for Ruby web development ..."
+  gem install rails -v $rails_environment
+  rbenv rehash

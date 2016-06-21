@@ -15,6 +15,7 @@ cleanup        Cleans up docker containers and images"
 run_tests() {
     echo "Run tests for Ubuntu 14.04; Root password is ubuntu"
     docker-compose run ubuntu1404 bash /home/ubuntu/linux-devstart/tests/debian-tests.sh
+    # docker start -ai $(docker ps -a -q --filter ancestor=ncronquist/linux-devstart:ubuntu14.04)
     echo "Run tests for Ubuntu 16.04; Root password is ubuntu"
     docker-compose run ubuntu1604 bash /home/ubuntu/linux-devstart/tests/debian-tests.sh
 }
@@ -27,7 +28,7 @@ bash() {
 
 cleanup() {
     docker-compose kill -s SIGKILL
-    docker-compose rm --all
+    docker-compose rm -f --all
     docker rm $(docker ps -a -q --filter ancestor=ncronquist/linux-devstart:ubuntu14.04)
     docker rm $(docker ps -a -q --filter ancestor=ncronquist/linux-devstart:ubuntu16.04)
 }

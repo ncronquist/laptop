@@ -1,7 +1,3 @@
 # Examples: Not currently installing any gems
-# fancy_echo "Installing Suspenders, thoughtbot's Rails template ..."
-#  gem install suspenders --no-document
-
-# fancy_echo "Installing Parity, shell commands for development, staging, and
-# production parity ..."
-#  gem install parity --no-document
+# fancy_echo "Installing Better Errors, to provide a better error page for Rails apps ..."
+#  gem install better_errors
